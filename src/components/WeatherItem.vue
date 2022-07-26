@@ -31,13 +31,13 @@ export default {
 </script>
 <style>
 .weather-container__item {
-   width: 14%;
-   padding: 15px;
-   text-align: center;
+	width: 14%;
+	padding: 15px;
+	text-align: center;
 }
 
 .weather-container__temperature {
-   font-size: 1.2em;
-   font-weight: 600;
+	font-size: 1.2em;
+	font-weight: 600;
 }
 </style>

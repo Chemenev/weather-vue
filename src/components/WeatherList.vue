@@ -1,71 +1,76 @@
 <template>
 	<div class="weather-container">
-		<div class="current-weather">
-			<div class="current-weather__info">
-				<h1>{{sityName}}</h1>
-				<p>{{currentDayName}}</p>
-				<p>{{currentFullDate}}</p>
-				<p class="current-weather__wind">Wind {{currentWind}} km/h</p>
+		<template v-if="isError">
+			<div class="error-messange">
+				<h1>Sorry, your city was not found</h1>
 			</div>
-			<div class="current-weather__icon">
-				<img :src=currentWeatherIconSrc alt="weather">
-			</div>
-			<div class="current-weather__temp">
-				<div class="current-weather__other-temp">
-					<span>Min: {{minWeatherTemperature}}°C</span>
-					<span>Max: {{maxtWeatherTemperature}}°C</span>
+		</template>
+		<template v-else>
+			<div class="current-weather">
+				<div class="current-weather__info">
+					<h1>{{cityName}}</h1>
+					<p>{{currentDayName}}</p>
+					<p>{{currentFullDate}}</p>
+					<p class="current-weather__wind">Wind {{currentWind}} km/h</p>
 				</div>
-				<div class="current-weather__current-temp">{{currentWeatherTemperature}}°C</div>
+				<div class="current-weather__icon">
+					<img :src=currentWeatherIconSrc alt="weather">
+				</div>
+				<div class="current-weather__temp">
+					<div class="current-weather__other-temp">
+						<span>Min: {{minWeatherTemperature}}°C</span>
+						<span>Max: {{maxtWeatherTemperature}}°C</span>
+					</div>
+					<div class="current-weather__current-temp">{{currentWeatherTemperature}}°C</div>
+				</div>
 			</div>
-		</div>
-		<weather-item v-for="(day, index) in listDays" :key="index" :day="day[1]" />
+			<weather-item v-for="(day, index) in listDays" :key="index" :day="day" />
+		</template>		
 	</div>
 </template>
 
 <script>
+import { mapGetters } from "vuex";
+import WeatherItem from '@/components/WeatherItem.vue';
+
 const DAY_NAME = ['SUNDAY', 'MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY'];
-import WeatherItem from '@/components/WeatherItem.vue'
 export default {
 	components:{
 		WeatherItem
 	},
-	props: {
-		listDays : {
-			type: Map,
-			default: () => {}
-		},
-		sityName: {
-			type: String,
-			default: ''
-		},
-		firtsDay: {
-			type: Object,
-			default: () => {}
-		},
-	}, 
 	computed:{
+		...mapGetters(['listDays','cityName','firstDay','isError']),
 		currentWeatherTemperature(){
-			return Math.trunc(this.firtsDay.main.temp);
-		},
+			return Math.trunc(this.firstDay.main.temp);
+		},   
 		minWeatherTemperature(){
-			return Math.trunc(this.firtsDay.main.temp_min);
+			return Math.trunc(this.firstDay.main.temp_min);
 		},
 		maxtWeatherTemperature(){
-			return Math.trunc(this.firtsDay.main.temp_max);
+			return Math.trunc(this.firstDay.main.temp_max);
 		},
 		currentWeatherIconSrc(){
-			return `https://openweathermap.org/img/wn/${this.firtsDay.weather[0]['icon']}@4x.png`;
+			return `https://openweathermap.org/img/wn/${this.firstDay.weather[0]['icon']}@4x.png`;
 		},
 		currentWind(){
-			return  this.firtsDay.wind.speed
+			return  this.firstDay.wind.speed;
 		},
 		currentFullDate(){
-			return this.firtsDay.dt_txt.slice(0, -9);
+			const dayData = this.firstDay.dt_txt;
+			let day = new Date(dayData).getDay();
+			day = (String(day).length === 1) ? '0' + day : day;
+
+			let month = new Date(dayData).getMonth();
+			month = (String(month).length === 1) ? '0' + month : month;
+
+			const year = new Date(dayData).getFullYear();
+			return `${year}-${month}-${day}`;
 		},
 		currentDayName(){
-			let numDay = new Date(this.firtsDay.dt_txt).getDay();
+			let numDay = new Date(this.firstDay.dt_txt).getDay();
+			//console.log(numDay)
 			return DAY_NAME[numDay];
-		},
+		}, 
 	}
 }
 </script>
@@ -76,7 +81,7 @@ export default {
    flex-wrap: wrap;
    justify-content: space-between;
    padding: 10vh;
-   margin: 5vh 20vh;
+   margin: 2vh 20vh;
    background: #fafafa;
 }
 
@@ -115,5 +120,10 @@ export default {
 
 .current-weather__current-temp {
    font-size: 116px;
+}
+
+.error-messange {
+   font-size: 35px;
+   text-transform: uppercase;
 }
 </style>
