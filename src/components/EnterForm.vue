@@ -5,7 +5,7 @@
 	</form>
 </template>
 <script>
-import { mapActions, mapMutations } from "vuex";
+import { mapActions } from "vuex";
 export default {
 	data(){
 		return{
@@ -13,12 +13,10 @@ export default {
 		}
 	}, 
 	methods:{
-		...mapMutations(['updateCity']),
-		...mapActions(['fetchWeather']),
+		...mapActions('weather',['fetchWeather']),
 		submit(){
 			if(this.enterCity){
-				this.updateCity(this.enterCity);
-				this.fetchWeather();
+				this.fetchWeather(this.enterCity);
 				this.enterCity = "";
 			}
 

@@ -39,7 +39,7 @@ export default {
 		WeatherItem
 	},
 	computed:{
-		...mapGetters(['listDays','cityName','firstDay','isError']),
+		...mapGetters('weather',['listDays','cityName','firstDay','isError']),
 		currentWeatherTemperature(){
 			return Math.trunc(this.firstDay.main.temp);
 		},   

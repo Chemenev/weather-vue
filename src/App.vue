@@ -13,7 +13,7 @@ export default {
   async created(){
     this.fetchWeather();
   },
-  methods: mapActions(['fetchWeather']),
+  methods: mapActions('weather',['fetchWeather']),
   components: {
     WeatherList,
     EnterForm
